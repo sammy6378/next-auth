@@ -8,7 +8,6 @@ import { useFormik } from "formik";
 import { validateRegisterSchema } from "@/componets/utils/validate";
 import { useRouter } from "next/navigation";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import {X} from 'lucide-react'
 import { useContextFunc } from "@/provider/authProvider";
 import {toast} from 'react-hot-toast'
 import { useAuthRegisterMutation } from "@/componets/services/authService";
@@ -30,13 +29,12 @@ const Register = () => {
     setloading(true);
     try {
       const response = await registerUser(values);
-      console.log(response);
       if(response){
         if(response.data?.activationToken){
           setActivationToken(response.data?.activationToken); 
           router.push('/user/activate-user');
           toast.success("Registration Success");
-        } 
+        }
       }else{
         toast.error("Registration Failed");
       }
@@ -60,14 +58,13 @@ const Register = () => {
     });
 
   return (
-    <div className="flex justify-center items-center min-h-screen dark:bg-gray-900 bg-white rounded shadow-md transition duration-500 ">
-      <div className="flex flex-col justify-center items-center bg-white dark:bg-gray-800 shadow-lg p-6 max-w-md w-full rounded-xl max-md:mx-2 max-md:py-2 max-500:p-2 relative">
-        <h2 className="text-3xl max-md:text-2xl max-300px:text-lg font-bold text-purple-900 dark:text-white mb-5">
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="flex flex-col justify-center items-center bg-white shadow-lg p-6 max-w-md w-full rounded-xl max-md:mx-2 max-md:py-2 max-500:p-2 relative">
+        <h2 className="text-3xl font-bold text-purple-900 mb-2">
           Sign Up
         </h2>
-        <X className="absolute top-2 right-2 text-gray-900 dark:text-white cursor-pointer" onClick={() => router.back()} />
- 
-        <form className="w-full space-y-3" onSubmit={handleSubmit}>
+
+        <form className="w-full" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="name" className="input-label">
               Name:
@@ -139,41 +136,33 @@ const Register = () => {
             )}
           </div>
 
-          <button type="submit" className={`submit-button max-500:py-2 ${loading ? "bg-purple-500/60 cursor-not-allowed" : ""}`} disabled={loading}>
+          <button type="submit" className={`submit-button mt-3 ${loading ? "bg-purple-500/60 cursor-not-allowed" : ""}`} disabled={loading}>
             {!loading ? "Sign Up" : "Signing up..."}
           </button>
         </form>
         
         <div className="w-full flex items-center justify-center gap-3 mb-3 mt-4">
-          <hr className="w-full h-px bg-gray-400 dark:bg-gray-900"></hr>
-          <span className="text-sm text-gray-600 dark:text-gray-300">OR</span>
-          <hr className="w-full h-px bg-gray-400 dark:bg-gray-900"></hr>
+          <hr className="w-full h-px bg-gray-400 "></hr>
+          <span className="text-sm text-gray-600 ">OR</span>
+          <hr className="w-full h-px bg-gray-400"></hr>
         </div>
 
-        <div className="w-full mt-4 flex flex-col justify-between gap-3 md:flex-row">
-          <button className="w-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white py-3 rounded-md font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300">
-            <Image
-              src="/github.png"
-              alt="GitHub"
-              className="mr-2"
-              width={25}
-              height={25}
-            />
-            GitHub
-          </button>
-          <button className="w-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white py-3 rounded-md font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300">
-            <Image
-              src="/google.png"
-              alt="Google"
-              className="mr-2"
-              width={25}
-              height={25}
-            />
-            Google
-          </button>
-        </div>
+         <div className="w-full mt-4 flex flex-col justify-between gap-3 md:flex-row">
+            <button
+              className="w-full flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition duration-300">
+              <Image src="/github.png" alt="GitHub" className="mr-2" width={25} height={25} />
+              GitHub
+            </button>
 
-        <p className="text-sm text-gray-600 dark:text-gray-300 mt-4 pb-2">
+              {/* google auth */}
+            <button
+              className="w-full flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition duration-300">
+              <Image src="/google.png" alt="GitHub" className="mr-2" width={25} height={25} />
+              Google
+            </button>
+          </div>
+
+        <p className="text-sm text-gray-600 mt-4 pb-2">
           Already have an account?{" "}
           <Link href="/user/login" className="text-purple-500 hover:underline">
             Log in

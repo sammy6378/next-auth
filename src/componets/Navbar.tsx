@@ -1,29 +1,50 @@
-"use client"
+"use client";
 
-import React from 'react'
-import { useRouter } from 'next/navigation'
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useConfirmLogout } from "./utils/LogoutHook";
+import { useAuthUser } from "./utils/reduxStore";
 
-function Navbar() {
-    const router = useRouter()
+export default function Navbar() {
+  const router = useRouter();
+  const user = useAuthUser();
+  const { handleLogout } = useConfirmLogout();
+
   return (
-    <nav className="flex items-center justify-between w-full h-16 bg-white px-4 sm:px-6">
-      <div className="flex items-center">
-        <a href="#" className="text-sm font-medium leading-none text-gray-700">
-          NextAuth
-        </a>
-      </div>
-      <div className="flex items-center">
-        <button onClick={() => router.push('/user/login')} className="ml-4 text-sm font-medium leading-none text-gray-700">
-          Login
-        </button>
-      </div>
-      <div className="flex items-center">
-        <button onClick={() => router.push('/user/register')} className="ml-4 text-sm font-medium leading-none text-gray-700">
-          Sign Up
-        </button>
-      </div>
-    </nav>
-  )
-}
+    <nav className="w-full p-4 font-poppins bg-gray-100 border border-b-1 text-black">
 
-export default Navbar
+      <section className="flex justify-between items-center px-3">
+        <Link href={"/"}>
+        <h2>Next-Auth</h2>
+        </Link>
+        <div className="flex justify-between">
+            <ul className={`flex items-center gap-5`}>
+              <li className="max-700:mt-2 max-700:mb-2">
+                <Link href={"/"} className={`hover:text-crimson`}>Home</Link>
+              </li>
+              <li className="max-700:mb-5">
+                <Link href={"/contact"} className={`hover:text-crimson`}>Contact Us</Link>
+              </li>
+            <li>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="hover:opacity-90 bg-crimson px-2 py-1 rounded duration-500 max-700:hidden "
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                onClick={() => router.push("/user/login")}
+                className="dark:bg-green hover:opacity-90 bg-crimson cursor-pointer px-4 py-1 rounded duration-500 max-700:hidden"
+              >
+                Login
+              </button>
+            )}
+            </li>
+          </ul>
+        </div>
+      </section>
+    </nav>
+  );
+}

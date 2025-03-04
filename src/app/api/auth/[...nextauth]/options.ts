@@ -1,34 +1,38 @@
-import type { NextAuthOptions } from 'next-auth'
-import Github from 'next-auth/providers/github'
-import CredentialsProvider  from 'next-auth/providers/credentials'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextAuthOptions } from "next-auth";
+import { JWT } from "next-auth/jwt";  // ✅ Import JWT type
+import { Session } from "next-auth";  // ✅ Import Session type
+import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 
 export const options: NextAuthOptions = {
-    providers: [
-        Github({
-            clientId: process.env.GITHUB_CLIENT_ID as string,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET as string
-        }),
-        CredentialsProvider({
-            name: "Credentials",
-            credentials:{
-                username: { label: "Username", type: "text",placeholder:"Enter your username" },
-                password: { label: "Password", type: "password",placeholder:"Enter your password" }
-            },
-            async authorize(credentials){
-                const user = { id: "47", username: "admin", password: "nextauth" };
-                if(credentials?.username === user.username && credentials?.password === user.password){
-                    return user;
-                }else{
-                    return null;
-                }
-            }
-        })
-    ],
-    pages:{
-        signIn: "/user/login"
+  providers: [
+    GithubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+  ],
+  pages: {
+    signIn: "/user/login", // Custom login page
+  },
+  callbacks: {
+    async jwt({ token, account }: { token: JWT; account?: any }) {
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token;
     },
-    session:{
-        strategy: "jwt"
+    async session({ session, token }: { session: Session; token: JWT }) {
+      session.accessToken = token.accessToken as string;
+      return session;
     },
-    secret: process.env.NEXTAUTH_SECRET,  
-}
+  },
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+};

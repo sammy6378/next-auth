@@ -1,42 +1,128 @@
 "use client";
 
-import React from 'react';
+import React,{useState} from 'react';
 import '../../app.css';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import { useAuthLoginMutation } from '@/componets/services/authService';
+import { ValidateLoginSchema } from '@/componets/utils/validate';
+import { useFormik } from 'formik';
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
+import {toast} from 'react-hot-toast'
+import { login } from '@/componets/services/slices/UserSlice';
+import { useDispatch } from "react-redux";
+import { signIn } from 'next-auth/react';
+interface FormData {
+  email: string;
+  password: string;
+}
 const Page = () => {
 
-    const handleSubmit = async(e:React.FormEvent) => {
-        e.preventDefault();
+  const [loginUser] = useAuthLoginMutation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setloading] = useState(false);
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const onSubmit = async (values: FormData) => {
+    setloading(true);
+   
+    try {
+      const response = await loginUser(values).unwrap();// ✅ Use unwrap() to get response data
+      console.log(response) 
+  
+      if (response?.accessToken) {
+        dispatch(
+          login({
+          user: response.user || null,
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken || '',
+          })
+        );
+        toast.success("Login Success!");
+        router.push("/user/dashboard"); // ✅ Redirect after successful login
+      } else {
+        toast.error("Invalid credentials");
+      }
+    } catch (error) {
+      if(error instanceof Error){
+          toast.error(error.message);
+        }else{
+          toast.error("Login Failed");
+        }
+    } finally {
+      setloading(false);
     }
+  };
+
+     const { values, handleChange, handleBlur, handleSubmit, errors, touched } =
+        useFormik({
+          initialValues: { email: "", password: "" },
+          validationSchema: ValidateLoginSchema,
+          onSubmit,
+        });
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen">
       <div className="flex flex-col justify-center items-center bg-white shadow-lg p-6 max-w-md w-full rounded-xl">
         <h2 className="text-3xl font-bold text-purple-900 mb-6">Login</h2>
 
-        <form className="w-full space-y-4">
-          <div>
+        <form className="w-full space-y-4" onSubmit={handleSubmit}>
+        <div>
+            <label htmlFor="email" className="input-label">
+              Email:
+            </label>
             <input
-              type="text"
-              placeholder="Username"
-              className="input-container"
+              type="email"
+              placeholder="Enter your Email"
+              value={values.email}
+              id="email"
+              onBlur={handleBlur}
+              className={`input-container ${errors.email && touched.email ? "input-error" : ""}`}
+              onChange={handleChange}
             />
+            {errors.email && touched.email && (
+              <div className="error-message">{errors.email}</div>
+            )}
           </div>
+
           <div>
+          <div className="relative">
+            <label htmlFor="password" className="input-label">
+              Password:
+            </label>
             <input
-              type="password"
+              type={`${showPassword ? "text" : "password"}`}
               placeholder="Password"
-              className="input-container"
+              id="password"
+              onBlur={handleBlur}
+              value={values.password}
+              onChange={handleChange}
+              className={`input-container ${errors.password && touched.password ? "input-error" : ""}`}
             />
+            {showPassword ? (
+              <span
+                className="absolute top-[54%] right-2 text-gray-400 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <FaEyeSlash />
+              </span>
+            ) : (
+              <span
+                className="absolute top-[54%] right-2 text-gray-400 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <FaEye />
+              </span>
+            )}
           </div>
-          <button
-            type="submit"
-            className="w-full bg-purple-600 text-white py-3 rounded-md font-semibold hover:bg-purple-700 transition duration-300"
-            onClick={handleSubmit}
-          >
-            Login
+          {errors.password && touched.password && (
+            <div className="error-message">{errors.password}</div>
+          )}
+        </div>
+        <button type="submit" className={`submit-button mt-3 ${loading ? "bg-purple-500/60 cursor-not-allowed" : ""}`} disabled={loading}>
+            {!loading ? "Sign In" : "Signing In..."}
           </button>
         </form>
 
@@ -47,14 +133,15 @@ const Page = () => {
                 </div>
         
                 <div className="w-full mt-4 flex flex-col justify-between gap-3 md:flex-row">
-                  <button
+                  <button onClick={() => signIn("github")}
                     className="w-full flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition duration-300">
+                    
                     <Image src="/github.png" alt="GitHub" className="mr-2" width={25} height={25} />
                     GitHub
                   </button>
 
                     {/* google auth */}
-                  <button
+                  <button onClick={() => signIn("google")}
                     className="w-full flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition duration-300">
                     <Image src="/google.png" alt="GitHub" className="mr-2" width={25} height={25} />
                     Google

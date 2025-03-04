@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface IUser {
+export interface IUser {
     name: string;
-    email: string;
-}
+    role: string;
+};
 
 interface AuthState {
     accessToken: string | null;
@@ -23,7 +23,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        login(state, action: PayloadAction<{ user: IUser; accessToken: string; refreshToken: string }>) {
+        login(state, action: PayloadAction<{ user: IUser | null; accessToken: string; refreshToken: string }>) {
             state.user = action.payload.user;
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken;

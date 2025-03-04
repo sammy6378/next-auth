@@ -6,6 +6,13 @@ interface TAuth {
     password: string;
 }
 
+export interface TAuthResponse {
+    accessToken: string;
+    user?: { name: string; role: string };
+    refreshToken?: string; 
+  }
+  
+
 interface TRegister {
     name: string;
     email: string;
@@ -23,12 +30,12 @@ interface TRegister {
   export const authService = createApi({
     reducerPath: "authApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://api-service-a7bbdqhmhyasbvga.southafricanorth-01.azurewebsites.net/api",
+        baseUrl: "http://localhost:8000/api",
         credentials: "include",
   }),
     endpoints: (builder) =>({
         // register user
-        authRegister: builder.mutation<TRegister,Partial<TRegister>>({
+        authRegister: builder.mutation<TRegister,Omit<TRegister, "activationToken">>({
             query: (user) => ({
                 url: '/user/register',
                 method: 'POST',
@@ -37,7 +44,7 @@ interface TRegister {
         }),
 
         // login user
-        authLogin: builder.mutation<TAuth,Partial<TAuth>>({
+        authLogin: builder.mutation<TAuthResponse,Partial<TAuth>>({
             query: (newUser) => ({
                 url: '/user/login',
                 method: 'POST',
@@ -51,7 +58,17 @@ interface TRegister {
                 method: "POST",
                 body: {activation_code,activation_token}
             })
-        })
+        }),
+
+        // logout user
+        authLogout: builder.mutation<{message: string}, void>({
+            query: () => ({
+                url: '/user/logout',
+                method: 'POST',
+                credentials: "include"  
+            })
+        }),
+
     })
   })
 
@@ -60,4 +77,5 @@ interface TRegister {
     useAuthRegisterMutation,
     useAuthLoginMutation,
     useActivateUserMutation,
+    useAuthLogoutMutation,
   } = authService;

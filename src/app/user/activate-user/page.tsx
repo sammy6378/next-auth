@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { VscWorkspaceTrusted } from "react-icons/vsc";
 import "../../app.css";
-import { useContextFunc } from "@/provider/authProvider";
+import { useContextFunc } from "@/context/authContext";
 import { useActivateUserMutation } from "@/componets/services/authService";
 
 interface verifyNumber {

@@ -8,7 +8,7 @@ interface TAuth {
 
 export interface TAuthResponse {
     accessToken: string;
-    user?: { name: string; role: string };
+    user?: TUser;
     refreshToken?: string; 
   }
   
@@ -23,6 +23,18 @@ interface TRegister {
   interface TActivate {
     activation_code: string;
     activation_token: string;
+  }
+
+
+  export interface TUser{
+    avatar: {
+        public_id: string,
+        url: string,
+      },
+      name: string,
+      email: string,
+      role: string,
+      isVerified: boolean
   }
 
 
@@ -52,6 +64,7 @@ interface TRegister {
             }),
         }),
 
+        // activate user
         activateUser: builder.mutation<TActivate, Partial<TActivate>>({
             query: ({activation_code, activation_token}) =>({
                 url: "user/activate-you",
@@ -69,6 +82,32 @@ interface TRegister {
             })
         }),
 
+        // update token
+        updateToken: builder.mutation<{ accessToken: string }, void>({
+            query: () => ({
+                url: '/user/update-token',
+                method: 'POST',
+            }),
+        }),
+
+        // social auth : google and github
+        socialAuth: builder.mutation<TRegister,Partial<TRegister>>({
+            query: (user) =>({
+                url: "/user/social-auth",
+                method: "POST",
+                body: user,
+            })
+        }),
+
+        // get user info
+        getUserInfo: builder.query<TUser, void>({
+            query: () => ({
+                url: '/user/info',
+                method: 'GET',
+                credentials: "include"
+            }),
+        }),
+
     })
   })
 
@@ -78,4 +117,6 @@ interface TRegister {
     useAuthLoginMutation,
     useActivateUserMutation,
     useAuthLogoutMutation,
+    useUpdateTokenMutation,
+    useSocialAuthMutation,
   } = authService;

@@ -4,47 +4,26 @@ import React,{useState} from 'react';
 import '../../app.css';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuthLoginMutation } from '@/componets/services/authService';
 import { ValidateLoginSchema } from '@/componets/utils/validate';
 import { useFormik } from 'formik';
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import { useRouter } from "next/navigation";
 import {toast} from 'react-hot-toast'
-import { login } from '@/componets/services/slices/UserSlice';
-import { useDispatch } from "react-redux";
 import { signIn } from 'next-auth/react';
+import { useConfirmLogin } from '@/componets/hooks/useLoginHook';
 interface FormData {
   email: string;
   password: string;
 }
 const Page = () => {
-
-  const [loginUser] = useAuthLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setloading] = useState(false);
-  const router = useRouter();
-  const dispatch = useDispatch();
+  const { handleLogin } = useConfirmLogin();
 
   const onSubmit = async (values: FormData) => {
     setloading(true);
    
     try {
-      const response = await loginUser(values).unwrap();// ✅ Use unwrap() to get response data
-      console.log(response) 
-  
-      if (response?.accessToken) {
-        dispatch(
-          login({
-          user: response.user || null,
-          accessToken: response.accessToken,
-          refreshToken: response.refreshToken || '',
-          })
-        );
-        toast.success("Login Success!");
-        router.push("/user/dashboard"); // ✅ Redirect after successful login
-      } else {
-        toast.error("Invalid credentials");
-      }
+      await handleLogin(values);
     } catch (error) {
       if(error instanceof Error){
           toast.error(error.message);
@@ -133,7 +112,7 @@ const Page = () => {
                 </div>
         
                 <div className="w-full mt-4 flex flex-col justify-between gap-3 md:flex-row">
-                  <button onClick={() => signIn("github")}
+                  <button onClick={() => signIn("github", { callbackUrl: "/user/dashboard" })}
                     className="w-full flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition duration-300">
                     
                     <Image src="/github.png" alt="GitHub" className="mr-2" width={25} height={25} />
@@ -141,7 +120,7 @@ const Page = () => {
                   </button>
 
                     {/* google auth */}
-                  <button onClick={() => signIn("google")}
+                  <button onClick={() => signIn("google", { callbackUrl: "/user/dashboard" })}
                     className="w-full flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition duration-300">
                     <Image src="/google.png" alt="GitHub" className="mr-2" width={25} height={25} />
                     Google

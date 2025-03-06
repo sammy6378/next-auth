@@ -30,6 +30,28 @@ export const options: NextAuthOptions = {
       session.accessToken = token.accessToken as string;
       return session;
     },
+    
+    async signIn({ user, account }) {
+      if (account?.provider) {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/social-auth`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: user.name,
+            email: user.email,
+            avatar: user.image,
+          }),
+        });
+    
+        if (!res.ok) return false;
+      }
+      return true;
+    },
+
+    async redirect() {
+      return process.env.NEXTAUTH_URL + "/user/dashboard"; // Ensure redirect
+    }
+    
   },
   session: {
     strategy: "jwt",

@@ -8,9 +8,10 @@ import { useFormik } from "formik";
 import { validateRegisterSchema } from "@/componets/utils/validate";
 import { useRouter } from "next/navigation";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import { useContextFunc } from "@/provider/authProvider";
+import { useContextFunc } from "@/context/authContext";
 import {toast} from 'react-hot-toast'
 import { useAuthRegisterMutation } from "@/componets/services/authService";
+import { signIn } from "next-auth/react";
 
 interface FormData {
   name: string;
@@ -148,14 +149,14 @@ const Register = () => {
         </div>
 
          <div className="w-full mt-4 flex flex-col justify-between gap-3 md:flex-row">
-            <button
+            <button onClick={() => signIn("github")}
               className="w-full flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition duration-300">
               <Image src="/github.png" alt="GitHub" className="mr-2" width={25} height={25} />
               GitHub
             </button>
 
               {/* google auth */}
-            <button
+            <button onClick={() => signIn("google")}
               className="w-full flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition duration-300">
               <Image src="/google.png" alt="GitHub" className="mr-2" width={25} height={25} />
               Google

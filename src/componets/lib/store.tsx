@@ -18,7 +18,7 @@ export const Store = configureStore({
     reducer: {
         auth: persistAuthReducer,
         [authService.reducerPath]: authService.reducer,
-    }, // Add your reducer here
+    },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck: {
         ignoredActions: [
             "persist/PERSIST", // 🚀 Ignore redux-persist actions

@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/componets/Navbar";
-import AuthProvider from "@/provider/authProvider";
+import AuthProvider from "@/context/authContext";
 import StoreProvider from "./storeProvider";
 import { Toaster } from "react-hot-toast";
+import TokenRefresher from "@/componets/tokenRefresher";
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,6 +34,7 @@ export default function RootLayout({
         <StoreProvider>
         <AuthProvider>
           <>
+          <TokenRefresher />
           <Navbar />
           {children}
           <Toaster />

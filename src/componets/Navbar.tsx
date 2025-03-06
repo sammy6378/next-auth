@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useConfirmLogout } from "./utils/LogoutHook";
-import { useAuthUser } from "./utils/reduxStore";
+import { useConfirmLogout } from "./hooks/useLogoutHook";
+import { useAuthUser } from "./hooks/reduxStore";
 
 export default function Navbar() {
   const router = useRouter();

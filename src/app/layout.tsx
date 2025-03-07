@@ -5,7 +5,6 @@ import Navbar from "@/componets/Navbar";
 import AuthProvider from "@/context/authContext";
 import StoreProvider from "./storeProvider";
 import { Toaster } from "react-hot-toast";
-import TokenRefresher from "@/componets/tokenRefresher";
 
 
 const geistSans = Geist({
@@ -34,7 +33,6 @@ export default function RootLayout({
         <StoreProvider>
         <AuthProvider>
           <>
-          <TokenRefresher />
           <Navbar />
           {children}
           <Toaster />

@@ -8,7 +8,8 @@ import { authService } from "../services/authService";
 // persit auth config for auth
 const persistAuthConfig = {
     key: "Auth",
-    storage
+    storage,
+    whitelist: ["accessToken", "expiresAt"], 
 }
 
 // apply persistreducer to authslice

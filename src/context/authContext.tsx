@@ -2,11 +2,9 @@
 "use client"
 
 import {createContext,Dispatch,SetStateAction,useContext,useState} from "react";
-
+import { useAutoRefresh } from "@/componets/hooks/useAutoRefresh";
 
 interface IContext {
-  accessToken: string | null;
-  setAccessToken: Dispatch<SetStateAction<string | null>>;
   activationToken: string | null;
   setActivationToken: Dispatch<SetStateAction<string | null>>;
 }
@@ -15,11 +13,13 @@ interface IContext {
 export const AppContext = createContext<IContext | undefined>(undefined);
 
 export default function ProviderFunction({children}: {children: React.ReactNode}) {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [activationToken, setActivationToken] = useState<string | null>(null);
 
+
+    useAutoRefresh();
+
   return (
-    <AppContext.Provider value={{accessToken,setAccessToken,activationToken,setActivationToken}}>
+    <AppContext.Provider value={{activationToken,setActivationToken}}>
           {children}
     </AppContext.Provider>
   );

@@ -9,7 +9,6 @@ interface TAuth {
 export interface TAuthResponse {
     accessToken: string;
     user?: TUser;
-    refreshToken?: string; 
   }
   
 
@@ -37,7 +36,11 @@ interface TRegister {
       isVerified: boolean
   }
 
-
+export interface TSocialAuth {
+    email: string;
+    password: string;
+    avatar?: string;
+}
 
   export const authService = createApi({
     reducerPath: "authApi",
@@ -87,11 +90,12 @@ interface TRegister {
             query: () => ({
                 url: '/user/update-token',
                 method: 'POST',
+                credentials: "include"
             }),
         }),
 
         // social auth : google and github
-        socialAuth: builder.mutation<TRegister,Partial<TRegister>>({
+        socialAuth: builder.mutation<TAuthResponse,Partial<TSocialAuth>>({
             query: (user) =>({
                 url: "/user/social-auth",
                 method: "POST",

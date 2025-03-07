@@ -16,7 +16,7 @@ export function useConfirmLogout() {
         const response = await logoutUser().unwrap();
         toast.success(response.message || "Logout Successful");
         dispatch(logout());
-        router.push("/user/login"); // ✅ Redirect
+        router.push("/user/login");
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Logout failed. Try again!");

@@ -29,18 +29,19 @@ const Register = () => {
   const onSubmit = async (values: FormData) => {
     setloading(true);
     try {
-      const response = await registerUser(values);
+      const response = await registerUser(values).unwrap();
       if(response){
-        if(response.data?.activationToken){
-          setActivationToken(response.data?.activationToken); 
+        if(response.activationToken){
+          setActivationToken(response.activationToken); 
           router.push('/user/activate-user');
           toast.success("Registration Success");
         }
       }else{
-        toast.error("Registration Failed");
+        toast.error("Registration failed");
       }
       
     } catch (error) {
+      console.log("Error response:", error); 
       if(error instanceof Error){
         toast.error(error.message);
       }else{
